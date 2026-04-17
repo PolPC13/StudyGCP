@@ -4,6 +4,14 @@ venv/
 env/
 ENV/
 
+
+scripts/debug_parse.py
+scripts/debug_row.py
+scripts/analyze_csv_issues.py
+scripts/analyze_docx_structure.py
+scripts/test_random_question.py
+
+
 # Python
 __pycache__/
 *.py[cod]
@@ -65,3 +73,4 @@ data/raw/*.pdf
 .pytest_cache/
 .coverage
 htmlcov/
+

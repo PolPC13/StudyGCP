@@ -1,203 +1,85 @@
-# 📚 GCP Study App
+# GCP Study App
 
-Una aplicación web interactiva para estudiar preguntas sobre Google Cloud Platform (GCP), con explicaciones detalladas, filtrado por temas y contador de aciertos/fallos.
+An interactive web application for studying Google Cloud Platform questions with detailed explanations, topic filtering, and score tracking.
 
----
+## Overview
 
-## 📋 Tabla de Contenidos
+This application provides 110 practice questions across four Google Cloud study domains:
+- Data Analysis and Presentation
+- Data Management
+- Data Pipeline Orchestration
+- Data Preparation and Ingestion
 
-- [Características](#características)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Instalación y Setup](#instalación-y-setup)
-- [Ejecución en Localhost](#ejecución-en-localhost)
-- [Cómo Funciona](#cómo-funciona)
-- [Añadir o Modificar Preguntas](#añadir-o-modificar-preguntas)
-- [Pipeline de Datos](#pipeline-de-datos)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+Questions are sourced from online documentation and educational materials, with some synthetically generated to complement the curriculum. Each question includes detailed explanations for all answer options.
 
----
+## Features
 
-## ✨ Características
+- 110 GCP practice questions with 4 options each
+- Detailed explanations for every option
+- Topic filtering to focus on specific areas
+- Session-based score tracking (X/Y format)
+- Responsive design for desktop, tablet, and mobile
+- Question selection from full list
+- Random question generation
 
-✅ **110 preguntas de GCP** con 4 opciones de respuesta  
-✅ **Explicaciones detalladas** para cada opción (por qué es correcta/incorrecta)  
-✅ **4 temas principales:**
-   - Data Analysis
-   - Data Management
-   - Data Pipeline Orchestration
-   - Data Preparation
-
-✅ **Filtrado por tema** para practicar áreas específicas  
-✅ **Contador de aciertos/fallos mejorado** - Muestra X/Y (de 110)  
-✅ **Selector de preguntas en lista** - Ver y seleccionar pregunta específica  
-✅ **Interfaz moderna y responsive** (funciona en móvil, tablet, desktop)  
-✅ **Manejo de sesiones** para persistencia de puntuación  
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-StudyGCP/
-├── app.py                          # Aplicación Flask principal
-├── exam.db                         # Base de datos SQLite (110 preguntas)
-├── README.md                       # Este archivo
-│
-├── data/
-│   ├── raw/                        # Archivos DOCX originales
-│   │   ├── Data_analysis.docx
-│   │   ├── Data_management.docx
-│   │   ├── Data_pipeline_orchestration.docx
-│   │   └── Data_preparation.docx
-│   │
-│   └── processed/
-│       └── questions.csv           # CSV procesado (intermediario)
-│
-├── scripts/
-│   ├── docx_to_csv.py             # Extrae preguntas de DOCX → CSV
-│   ├── create_db.py               # Crea schema de SQLite
-│   ├── import_csv_to_sqlite.py    # Importa CSV → exam.db
-│   ├── verify_db.py               # Verifica integridad de BD
-│   ├── analyze_csv_issues.py      # Detecta filas incompletas
-│   └── test_random_question.py    # Script de prueba
-│
-└── templates/
-    └── question.html               # Template HTML/CSS/JS
-```
-
----
-
-## 🚀 Instalación y Setup
-
-### Requisitos Previos
+## Requirements
 
 - Python 3.8+
-- pip (gestor de paquetes Python)
+- pip
 
-### Paso 1: Clonar o Descargar el Proyecto
+## Installation
 
-```bash
-cd c:\Users\ppedrajas\Documents\StudyGCP
-```
+1. Clone or download this repository
+2. Create a virtual environment (optional but recommended):
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
 
-### Paso 2: Crear Entorno Virtual (Opcional pero Recomendado)
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
+4. Verify the database:
+   ```bash
+   python scripts/verify_db.py
+   ```
 
-### Paso 3: Instalar Dependencias
+## Running the Application
 
-```bash
-pip install flask python-docx
-```
-
-**Dependencias:**
-- `flask` - Framework web
-- `python-docx` - Lectura de archivos DOCX (solo si añades preguntas)
-
-### Paso 4: Verificar Base de Datos
-
-```bash
-python scripts/verify_db.py
-```
-
-**Salida esperada:**
-```
-✓ Total preguntas en BD: 110
-✓ Preguntas con explicación A: 110
-✓ Preguntas con explicación B: 110
-✓ Preguntas con explicación C: 109
-✓ Preguntas con explicación D: 109
-```
-
----
-
-## 💻 Ejecución en Localhost
-
-### Iniciar la Aplicación
-
+Start the application:
 ```bash
 python app.py
 ```
 
-**Salida esperada:**
-```
- * Serving Flask app 'app'
- * Debug mode: on
- * Running on http://localhost:5000
-Press CTRL+C to quit
- * Debugger is active!
-```
+Open your browser and navigate to `http://localhost:5000`
 
-### Acceder a la App
+To stop the application, press `CTRL+C` in the terminal.
 
-Abre tu navegador y ve a:
-```
-http://localhost:5000
-```
-
-### Detener la Aplicación
-
-Presiona `CTRL+C` en la terminal donde corre Flask.
-
----
-
-## 🎯 Cómo Funciona
-
-### Flujo de Usuario
+## Project Structure
 
 ```
-1. [Inicio] → Usuario entra a http://localhost:5000
-   ↓
-2. [Seleccionar Tema] (Opcional)
-   - Botones: "Todos", "Data_analysis", "Data_management", etc.
-   - Por defecto: muestra todas las preguntas
-   ↓
-3. [Ver Pregunta Aleatoria]
-   - Se carga una pregunta con 4 opciones
-   - Se muestra el tema (badge azul)
-   - Se muestra el contador: X/Y aciertos
-   ↓
-4. [Seleccionar Respuesta]
-   - Usuario hace click en una de las 4 opciones
-   - Se envía a /answer vía POST
-   ↓
-5. [Ver Resultado]
-   - ✅ Si acertó: fondo verde
-   - ❌ Si falló: fondo rojo + muestra respuesta correcta
-   - Se actualiza contador
-   ↓
-6. [Ver Explicaciones]
-   - Muestra explicación de TODAS las opciones
-   - Opción correcta destacada en verde
-   - Opción seleccionada (si fue mal) destacada en rojo
-   ↓
-7. [Siguiente Pregunta]
-   - Click en "Siguiente pregunta →"
-   - Vuelve al paso 3
-   ↓
-8. [Reiniciar Contador] (Opcional)
-   - Click en "🔄 Reset"
-   - Vuelve a 0/0
-
-9. [Ver Lista de Preguntas] (Nueva Funcionalidad)
-   - Click en "📋 Ver Lista"
-   - Muestra todas las preguntas en formato de tarjetas
-   - Cada pregunta es clickeable
-   - Se puede filtrar por tema
-   - Vuelve a home manteniendo contador
+├── app.py                          # Flask application
+├── requirements.txt                # Python dependencies
+├── data/
+│   └── processed/
+│       └── questions.csv           # Question data
+├── scripts/
+│   ├── create_db.py               # Initialize SQLite database
+│   ├── import_csv_to_sqlite.py    # Import questions from CSV
+│   ├── docx_to_csv.py             # Convert DOCX to CSV format
+│   └── verify_db.py               # Verify database integrity
+└── templates/
+    ├── question.html              # Question display template
+    └── questions_list.html        # Questions list template
 ```
 
-### Navegación URL
+## Technologies
 
-| URL | Método | Descripción |
-|-----|--------|-------------|
-| `/` | GET | Página principal (pregunta aleatoria) |
-| `/?topic=Data_analysis` | GET | Filtrada por tema |
-| `/answer` | POST | Procesa respuesta y muestra resultado |
-| `/next?topic=Data_analysis` | GET | Carga siguiente pregunta |
+- Flask - Web framework
+- SQLite - Database
+- Python - Backend language
 | `/questions` | GET | Muestra lista de todas las preguntas |
 | `/questions?topic=Data_analysis` | GET | Lista filtrada por tema |
 | `/question/<id>` | GET | Carga pregunta específica por ID |
