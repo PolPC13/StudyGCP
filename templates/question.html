@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP Study App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 28px;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .score-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .score-box .correct {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        
+        .score-box .total {
+            color: #666;
+        }
+        
+        .score-box .bd-total {
+            color: #999;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        
+        .list-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .list-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .topic-filter {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .order-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .order-btn {
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .order-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .order-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            font-weight: 700;
+        }
+        
+        .topic-btn {
+            padding: 8px 14px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .topic-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .topic-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+            font-weight: 700;
+        }
+        
+        .question-position {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        
+        .reset-btn {
+            padding: 8px 14px;
+            background: rgba(239, 68, 68, 0.8);
+            border: 2px solid rgba(239, 68, 68, 1);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: rgba(239, 68, 68, 1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .topic-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #1f2937;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+        
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+        
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .option-btn.correct-answer {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+        
+        .option-btn.wrong-answer {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .result-section {
+            margin-top: 28px;
+            padding: 20px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-section.correct {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+        }
+        
+        .result-section.incorrect {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+        }
+        
+        .result-header {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .result-section.correct .result-header {
+            color: #22c55e;
+        }
+        
+        .result-section.incorrect .result-header {
+            color: #ef4444;
+        }
+        
+        .correct-answer-info {
+            background: rgba(34, 197, 94, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #166534;
+        }
+        
+        .explanations {
+            margin-top: 16px;
+        }
+        
+        .explanation-item {
+            background: rgba(0, 0, 0, 0.03);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .explanation-item strong {
+            color: #1f2937;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .explanation-item.correct-expl {
+            background: #f0fdf4;
+            border-left: 3px solid #22c55e;
+        }
+        
+        .explanation-item.incorrect-expl {
+            background: #fef2f2;
+            border-left: 3px solid #ef4444;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        @media (max-width: 600px) {
+            .card {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 GCP Study App</h1>
+            <div class="header-right">
+                <div class="score-box">
+                    <span class="correct">{{ score.correct }}</span>
+                    <span class="total"> / {{ score.total }}</span>
+                    <span class="bd-total">(de {{ total_questions }} preguntas)</span>
+                </div>
+                <a href="{{ url_for('questions_list', topic=current_topic) }}" class="list-btn">📋 Ver Lista</a>
+            </div>
+        </div>
+
+        <!-- Filtros de Topics -->
+        <div class="filters">
+            <div class="topic-filter">
+                <span style="color: white; font-weight: 600; font-size: 13px;">Filtro:</span>
+                <a href="{{ url_for('home', topic='all', order=current_order) }}" class="topic-btn {% if current_topic == 'all' %}active{% endif %}">Todos</a>
+                {% for topic in topics %}
+                    <a href="{{ url_for('home', topic=topic, order=current_order) }}" class="topic-btn {% if current_topic == topic %}active{% endif %}">{{ topic_display_names.get(topic, topic) }}</a>
+                {% endfor %}
+                <a href="{{ url_for('reset') }}" class="reset-btn">🔄 Reset</a>
+            </div>
+            
+            <div class="order-buttons">
+                <span style="color: white; font-weight: 600; font-size: 13px;">Orden:</span>
+                <a href="{{ url_for('home', topic=current_topic, order='random') }}" class="order-btn {% if current_order == 'random' %}active{% endif %}">🔀 Random</a>
+                <a href="{{ url_for('home', topic=current_topic, order='asc') }}" class="order-btn {% if current_order == 'asc' %}active{% endif %}">↑ Ascendente</a>
+            </div>
+            
+            {% if question_pos and question_total %}
+                <div class="question-position">
+                    Pregunta {{ question_pos }} de {{ question_total }} en {{ topic_display_names.get(question.topic, question.topic) }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            {% if question.topic %}
+                <div class="topic-badge">{{ topic_display_names.get(question.topic, question.topic) }}</div>
+            {% endif %}
+
+            <div class="question-text">{{ question.question_text }}</div>
+
+            {% if not answered %}
+                <!-- FORMULARIO DE PREGUNTAS -->
+                <form method="post" action="/answer" id="answersForm">
+                    <input type="hidden" name="question_id" value="{{ question.id }}">
+                    <input type="hidden" name="topic_filter" value="{{ current_topic }}">
+                    <input type="hidden" name="order" value="{{ current_order }}">
+                    
+                    <div class="options">
+                        <button class="option-btn" type="submit" name="selected_option" value="A">
+                            <strong>A)</strong> {{ question.option_a }}
+                        </button>
+                        <button class="option-btn" type="submit" name="selected_option" value="B">
+                            <strong>B)</strong> {{ question.option_b }}
+                        </button>
+                        <button class="option-btn" type="submit" name="selected_option" value="C">
+                            <strong>C)</strong> {{ question.option_c }}
+                        </button>
+                        <button class="option-btn" type="submit" name="selected_option" value="D">
+                            <strong>D)</strong> {{ question.option_d }}
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <!-- RESPUESTA Y EXPLICACIONES -->
+                <div class="options">
+                    <div class="option-btn {% if 'A' == question.correct_answer %}correct-answer{% elif selected == 'A' %}wrong-answer{% endif %}">
+                        <strong>A)</strong> {{ question.option_a }}
+                    </div>
+                    <div class="option-btn {% if 'B' == question.correct_answer %}correct-answer{% elif selected == 'B' %}wrong-answer{% endif %}">
+                        <strong>B)</strong> {{ question.option_b }}
+                    </div>
+                    <div class="option-btn {% if 'C' == question.correct_answer %}correct-answer{% elif selected == 'C' %}wrong-answer{% endif %}">
+                        <strong>C)</strong> {{ question.option_c }}
+                    </div>
+                    <div class="option-btn {% if 'D' == question.correct_answer %}correct-answer{% elif selected == 'D' %}wrong-answer{% endif %}">
+                        <strong>D)</strong> {{ question.option_d }}
+                    </div>
+                </div>
+
+                <!-- RESULTADO -->
+                <div class="result-section {% if is_correct %}correct{% else %}incorrect{% endif %}">
+                    {% if is_correct %}
+                        <div class="result-header">✅ ¡Respuesta Correcta!</div>
+                    {% else %}
+                        <div class="result-header">❌ Respuesta Incorrecta</div>
+                        <div class="correct-answer-info">
+                            <strong>La respuesta correcta es: {{ question.correct_answer }}</strong>
+                        </div>
+                    {% endif %}
+
+                    <!-- EXPLICACIONES DETALLADAS -->
+                    <div class="explanations">
+                        {% if explanations.A %}
+                            <div class="explanation-item {% if question.correct_answer == 'A' %}correct-expl{% elif selected == 'A' and not is_correct %}incorrect-expl{% endif %}">
+                                <strong>A) {{ question.option_a }}</strong>
+                                {{ explanations.A }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if explanations.B %}
+                            <div class="explanation-item {% if question.correct_answer == 'B' %}correct-expl{% elif selected == 'B' and not is_correct %}incorrect-expl{% endif %}">
+                                <strong>B) {{ question.option_b }}</strong>
+                                {{ explanations.B }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if explanations.C %}
+                            <div class="explanation-item {% if question.correct_answer == 'C' %}correct-expl{% elif selected == 'C' and not is_correct %}incorrect-expl{% endif %}">
+                                <strong>C) {{ question.option_c }}</strong>
+                                {{ explanations.C }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if explanations.D %}
+                            <div class="explanation-item {% if question.correct_answer == 'D' %}correct-expl{% elif selected == 'D' and not is_correct %}incorrect-expl{% endif %}">
+                                <strong>D) {{ question.option_d }}</strong>
+                                {{ explanations.D }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="action-buttons">
+                    <a href="{{ url_for('next_question', topic=current_topic, order=current_order) }}" class="btn btn-primary">
+                        Siguiente pregunta →
+                    </a>
+                    {% if not from_list %}
+                        <a href="{{ url_for('previous_question', question_id=question.id, topic=current_topic) }}" class="btn btn-secondary">
+                            ← Anterior
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

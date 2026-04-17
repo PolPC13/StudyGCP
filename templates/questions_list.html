@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Preguntas - GCP Study App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 28px;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .score-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .score-box .correct {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        
+        .score-box .total {
+            color: #666;
+        }
+        
+        .score-box .bd-total {
+            color: #999;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+        
+        .back-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .topic-filter {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .topic-btn {
+            padding: 8px 14px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .topic-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .topic-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+            font-weight: 700;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        
+        .question-item {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: #1f2937;
+            background: #f9fafb;
+        }
+        
+        .question-item:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .question-number {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        
+        .question-text {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #4b5563;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .question-topic {
+            font-size: 11px;
+            color: #999;
+            margin-top: auto;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .count-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .card {
+                padding: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 GCP Study App</h1>
+            <div class="header-right">
+                <div class="score-box">
+                    <span class="correct">{{ score.correct }}</span>
+                    <span class="total"> / {{ score.total }}</span>
+                    <span class="bd-total">(de {{ total_questions }})</span>
+                </div>
+                <a href="{{ url_for('home') }}" class="back-btn">← Volver</a>
+            </div>
+        </div>
+
+        <!-- Filtros de Topics -->
+        <div class="filters">
+            <div class="topic-filter">
+                <span style="color: white; font-weight: 600; font-size: 13px;">Filtro:</span>
+                <a href="{{ url_for('questions_list', topic='all') }}" class="topic-btn {% if current_topic == 'all' %}active{% endif %}">Todos</a>
+                {% for topic in topics %}
+                    <a href="{{ url_for('questions_list', topic=topic) }}" class="topic-btn {% if current_topic == topic %}active{% endif %}">{{ topic_display_names.get(topic, topic) }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Lista de Preguntas</h2>
+            
+            {% if current_topic != 'all' %}
+                <div class="count-info">
+                    Mostrando {{ questions|length }} preguntas del tema: <strong>{{ topic_display_names.get(current_topic, current_topic) }}</strong>
+                </div>
+            {% else %}
+                <div class="count-info">
+                    Mostrando {{ questions|length }} de {{ total_questions }} preguntas totales
+                </div>
+            {% endif %}
+            
+            {% if questions %}
+                <div class="questions-grid">
+                    {% for question in questions %}
+                        <a href="{{ url_for('view_question', question_id=question.id) }}" class="question-item">
+                            <div class="question-number">Q{{ question.source_question_number }}</div>
+                            <div class="question-text">{{ question.question_text }}</div>
+                            <div class="question-topic">{{ topic_display_names.get(question.topic, question.topic) }}</div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>❌ No hay preguntas disponibles en este tema</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
