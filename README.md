@@ -29,8 +29,13 @@ Questions are sourced from online documentation and educational materials, with 
 
 ## Installation
 
-1. Clone or download this repository
-2. Create a virtual environment (optional but recommended):
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/StudyGCP.git
+   cd StudyGCP
+   ```
+
+2. Create a virtual environment (recommended):
    ```bash
    python -m venv .venv
    .venv\Scripts\activate
@@ -41,7 +46,13 @@ Questions are sourced from online documentation and educational materials, with 
    pip install -r requirements.txt
    ```
 
-4. Verify the database:
+4. Populate the database:
+   ```bash
+   python scripts/create_db.py
+   python scripts/import_csv_to_sqlite.py
+   ```
+
+5. Verify the database:
    ```bash
    python scripts/verify_db.py
    ```
@@ -52,6 +63,13 @@ Start the application:
 ```bash
 python app.py
 ```
+
+Alternatively, on Windows, you can use the quick launcher script:
+```bash
+run_study_app.bat
+```
+
+This batch script automatically creates the virtual environment (if needed), activates it, installs dependencies, and starts the application.
 
 Open your browser and navigate to `http://localhost:5000`
 
