@@ -22,6 +22,10 @@ Questions are sourced from online documentation and educational materials, with 
 - Question selection from full list
 - Random question generation
 
+## Screenshots
+
+![Study App Interface](docs/images/png_01.png)
+
 ## Requirements
 
 - Python 3.8+
